@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.mortbay.log.Log;
 
@@ -38,10 +40,12 @@ import smartrics.rest.config.Config;
  */
 public enum ContentType {
 
-    XML, JSON, TEXT, JS;
+    XML, JSON, TEXT, JS;    
 
     private static Map<String, ContentType> contentTypeToEnum = new HashMap<String, ContentType>();
     private static String defaultCharset;
+        
+    private static String vndExtPattern = "application/.+\\+(\\w+)";
     static {
         resetDefaultMapping();
     }
@@ -55,11 +59,30 @@ public enum ContentType {
         }
         return types;
     }
+    
+    private static ContentType matchVndType(String contentType) {
+          // Compile and use regular expression for "+type"
+            Pattern pattern = Pattern.compile(vndExtPattern);
+            Matcher matcher = pattern.matcher(contentType.toString());
+            boolean matchFound = matcher.find();
+            
+            ContentType result = null;
+            if (matchFound) {
+                String subType = matcher.group(1);
+                result = ContentType.valueOf(subType.toUpperCase());                
+            } 
+            
+            return result;
+    }
 
     public static ContentType typeFor(String t) {
         ContentType r = contentTypeToEnum.get(t);
         if (r == null) {
-            r = contentTypeToEnum.get("default");
+                r = matchVndType(t);
+                if( r == null) {
+                    r = contentTypeToEnum.get("default");
+                }
+            
         }
         return r;
     }
@@ -72,7 +95,7 @@ public enum ContentType {
         Map<String, String> map = Tools.convertStringToMap(configStr, "=", "\n");
         for (Map.Entry<String, String> e : map.entrySet()) {
             String value = e.getValue();
-            String enumName = value.toUpperCase();
+            String enumName = value.toUpperCase();            
             ContentType ct = ContentType.valueOf(enumName);
             if (null == ct) {
                 ContentType[] values = ContentType.values();
@@ -120,16 +143,20 @@ public enum ContentType {
         contentTypeToEnum.put("application/x-javascript", ContentType.JS);
     }
 
-    public static ContentType parse(List<Header> contentTypeHeaders) {
+    public static ContentType parse(List<Header> contentTypeHeaders) {        
         if (contentTypeHeaders.size() != 1 || !"Content-Type".equalsIgnoreCase(contentTypeHeaders.get(0).getName())) {
             return contentTypeToEnum.get("default");
         }
         String typeString = contentTypeHeaders.get(0).getValue();
         typeString = typeString.split(";")[0].trim();
         // TODO: capture encoding
-        ContentType ret = contentTypeToEnum.get(typeString);
+        ContentType ret = contentTypeToEnum.get(typeString);       
         if (ret == null) {
-            return contentTypeToEnum.get("default");
+            ret = matchVndType(typeString);
+            if( ret == null) {
+                 return contentTypeToEnum.get("default");
+            }
+           
         }
         return ret;
     }
