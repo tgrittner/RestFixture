@@ -534,6 +534,18 @@ public class RestFixture extends ActionFixture {
         String header = GLOBALS.substitute(headers);
         requestHeaders = parseHeaders(header);    	
     }
+    
+    public void HEAD() {
+		debugMethodCallStart();
+		doMethod("Head");
+		debugMethodCallEnd();
+	}
+    
+    public void OPTIONS() {
+		debugMethodCallStart();
+		doMethod("Options");
+		debugMethodCallEnd();
+	}
 
     /**
 	 * <code> | PUT | URL | ?ret | ?headers | ?body |</code>
