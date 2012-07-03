@@ -20,10 +20,7 @@
  */
 package smartrics.rest.fitnesse.fixture.support;
 
-import org.apache.commons.httpclient.Credentials;
-import org.apache.commons.httpclient.HostConfiguration;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.params.HostParams;
 import org.apache.commons.httpclient.params.HttpClientParams;
@@ -40,6 +37,7 @@ import smartrics.rest.config.Config;
 public class HttpClientBuilder {
     public static final Integer DEFAULT_SO_TO = 3000;
     public static final Integer DEFAULT_PROXY_PORT = 80;
+    public static final String DEFAULT_HTTP_MGR = MultiThreadedHttpConnectionManager.class.getName();
 
     public HttpClient createHttpClient(final Config config) {
         HttpClient client = createConfiguredClient(config);
@@ -53,8 +51,14 @@ public class HttpClientBuilder {
     private HttpClient createConfiguredClient(final Config config) {
         HttpClientParams params = new HttpClientParams();
         params.setSoTimeout(DEFAULT_SO_TO);
+        params.setConnectionManagerClass(MultiThreadedHttpConnectionManager.class);
         if (config != null) {
             params.setSoTimeout(config.getAsInteger("http.client.connection.timeout", DEFAULT_SO_TO));
+            try {
+            params.setConnectionManagerClass(Class.forName(config.get("http.connection-manager.class", DEFAULT_HTTP_MGR)));
+            } catch (ClassNotFoundException cnfe) {
+                // noop
+            }
         }
         HttpClient client = new HttpClient(params);
         return client;
