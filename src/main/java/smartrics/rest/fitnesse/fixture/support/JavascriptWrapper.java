@@ -21,11 +21,14 @@
 package smartrics.rest.fitnesse.fixture.support;
 
 import java.lang.reflect.InvocationTargetException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.EcmaError;
 import org.mozilla.javascript.EvaluatorException;
@@ -42,12 +45,15 @@ import smartrics.rest.client.RestResponse;
  * 
  */
 public class JavascriptWrapper {
+    
+    private static final Log LOG = LogFactory.getLog(JavascriptWrapper.class);
 
     private static final String RESPONSE_OBJ_NAME = "response";
     private static final String SYMBOLS_OBJ_NAME = "symbols";
     private static final String JSON_OBJ_NAME = "jsonbody";
 
     public Object evaluateExpression(RestResponse response, String expression) {
+        LOG.info("evaluateExpression response="+response+", expression="+expression);
         if (expression == null) {
             return null;
         }
@@ -87,12 +93,16 @@ public class JavascriptWrapper {
 
     private Object evaluateExpression(Context context, ScriptableObject scope, String expression) {
         try {
+            expression = expression.replace("&lt;", "<").replace("&gt;", ">");
+            
             Object result = context.evaluateString(scope, expression, null, 1, null);
             return result;
         } catch (EvaluatorException e) {
-            throw new JavascriptException(e.getMessage());
+            LOG.error("evaluateExpression threw EvaluatorException, with params context="+context+" scope="+scope+" expression="+expression+": "+e);
+            throw new JavascriptException(e);
         } catch (EcmaError e) {
-            throw new JavascriptException(e.getMessage());
+            LOG.error("evaluateExpression threw EcmaError, with params context="+context+" scope="+scope+" expression="+expression+": "+e);
+            throw new JavascriptException(e);
         }
     }
 
@@ -122,11 +132,14 @@ public class JavascriptWrapper {
                 callMethodOnJsObject(response, "addHeader", h.getName(), h.getValue());
             }
         } catch (IllegalAccessException e) {
-            throw new JavascriptException(e.getMessage());
+            LOG.error("evaluateExpression threw IllegalAccessException: "+e);
+            throw new JavascriptException(e);
         } catch (InstantiationException e) {
-            throw new JavascriptException(e.getMessage());
+            LOG.error("evaluateExpression threw InstantiationException: "+e);
+            throw new JavascriptException(e);
         } catch (InvocationTargetException e) {
-            throw new JavascriptException(e.getMessage());
+            LOG.error("evaluateExpression threw InvocationTargetException: "+e);
+            throw new JavascriptException(e);
         }
     }
 

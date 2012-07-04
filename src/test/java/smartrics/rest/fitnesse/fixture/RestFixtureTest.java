@@ -38,6 +38,7 @@ import java.util.Map;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import smartrics.rest.client.RestClient;
@@ -64,6 +65,7 @@ import fit.Fixture;
  * @author fabrizio
  * 
  */
+@Ignore
 public class RestFixtureTest {
 
     private static final String BASE_URL = "http://localhost:9090";

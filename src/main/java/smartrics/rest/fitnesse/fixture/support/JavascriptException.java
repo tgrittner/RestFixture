@@ -30,7 +30,15 @@ public class JavascriptException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
 
+    public JavascriptException(Exception e) {
+        super(e);
+    }
+    
     public JavascriptException(String message) {
         super(message);
+    }
+    
+    public JavascriptException(String message, Exception e) {
+        super(message, e);
     }
 }
