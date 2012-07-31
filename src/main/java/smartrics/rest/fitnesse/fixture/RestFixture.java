@@ -20,11 +20,14 @@
  */
 package smartrics.rest.fitnesse.fixture;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Vector;
 
 import org.apache.commons.logging.Log;
@@ -165,6 +168,8 @@ public class RestFixture extends ActionFixture {
 
     private static final Log LOG = LogFactory.getLog(RestFixture.class);
 
+    private static String versionNumber = null;
+    
     protected Variables GLOBALS;
 
     private RestResponse lastResponse;
@@ -212,6 +217,7 @@ public class RestFixture extends ActionFixture {
     private String lastEvaluation;
 
     private int minLenForCollapseToggle;
+    
 
     /**
      * Constructor for Fit runner.
@@ -468,6 +474,45 @@ public class RestFixture extends ActionFixture {
             requestBody = GLOBALS.substitute(text);
             renderReplacement(cell, requestBody);
         }
+    }
+
+    /**
+     * <code>| getVersion | 'Fixture' or 'Client' |</code>
+     * <p/>
+     * header text must be nvp. name and value must be separated by ':' and each header is in its own line
+     */
+    public void getVersion() {
+    	if (row.size() >=3) { 
+    		row.getCell(1).body(getFormatter().gray("RestFixtureVersion: " + readVersionFromFile()));
+    		row.getCell(2).body(getFormatter().gray("RestClientVersion: " + restClient.getVersion()));
+        } else {
+            row.getCell(0).body(getFormatter().gray("RestFixtureVersion: " + readVersionFromFile() + " RestClientVersion: " + restClient.getVersion()));
+        }
+    }
+    
+
+    private String readVersionFromFile() {
+    	return readVersionFromFile("/RestFixture.version"); 
+    }
+    
+    private String readVersionFromFile(String versionfile) {
+    	if (versionNumber == null) {
+    		InputStream in = this.getClass().getResourceAsStream(versionfile);  
+    		if (in != null) {
+    			Properties props = new Properties();  
+    			try {
+    				props.load(in);
+    				in.close();
+    			} catch (IOException e) {
+    				versionNumber = "IOException on Versionfile >"+ versionfile + "<";
+    			}  
+    			versionNumber = props.getProperty("version", "versionnumber not set");
+    		}
+    		else {
+    			versionNumber = versionfile + " is missing";
+    		}
+    	}
+        return (versionNumber);
     }
 
     /**

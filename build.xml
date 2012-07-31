@@ -80,6 +80,7 @@
             <src path="${src}" />
             <classpath refid="project.classpath" />
         </javac>
+		<copy todir="${build}/classes/main" file="version.txt" />
     </target>
 
     <target name="compile-unit" depends="compile" description="compiles unit tests">
@@ -137,7 +138,12 @@
     </target>
 
     <target name="package" depends="compile,compile-cat" description="packages the RestFixture and RestFixture.fitnesse jars">                
-		
+
+        <tstamp>
+          <format property="time" pattern="yyyy/MM/dd HH:mm:ss" />
+        </tstamp>
+        <echo message="version=${time}${line.separator}user=${user.name}${line.separator}" file="${build}/classes/main/RestFixture.version" />
+     
         <jar destfile="${restfixture.jar}">
             <fileset dir="${build}/classes/main" includes="**/*"/>
             <fileset dir="${resources}" includes="**/* *"/>
