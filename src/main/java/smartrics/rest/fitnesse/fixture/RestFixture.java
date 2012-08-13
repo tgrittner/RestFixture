@@ -116,14 +116,18 @@ import fit.Parse;
  * <td><i>boolean value. if true, the actual value of the header or body in an expectation cell is displayed even when the expectation is met.</i></td>
  * </tr>
  * <tr>
+ * <td>restfixture.display.complete.url</td>
+ * <td><i>boolean value. if true, the complete url is displayed and not only the relative ressource path.</i></td>
+ * </tr>
+ * <tr>
  * <td>restfixture.default.headers</td>
  * <td><i>comma separated list of key value pairs representing the default list of headers to be passed for each request. key and values are separated by a
- * colon. Entries are sepatated by \n. {@link RestFixture#setHeader()} will override this value. </i></td>
+ * colon. Entries are separated by \n. {@link RestFixture#setHeader()} will override this value. </i></td>
  * </tr>
  * <tr>
  * <td>restfixture.xml.namespaces.context</td>
  * <td><i>comma separated list of key value pairs representing namespace declarations. The key is the namespace alias, the value is the namespace URI. alias and
- * URI are separated by a = sign. Entries are sepatated by {@code System.getProperty("line.separator")}. These entries will be used to define the namespace
+ * URI are separated by a = sign. Entries are separated by {@code System.getProperty("line.separator")}. These entries will be used to define the namespace
  * context to be used in xpaths that are evaluated in the results.</i></td>
  * </tr>
  * <tr>
@@ -195,6 +199,8 @@ public class RestFixture extends ActionFixture {
     private Config config;
 
     private boolean displayActualOnRight;
+
+    private boolean displayCompleteUrl;
 
     private boolean debugMethodCall = false;
 
@@ -879,7 +885,12 @@ public class RestFixture extends ActionFixture {
         String clientBaseUri = restClient.getBaseUrl();
         String u = clientBaseUri + uri;
         CellWrapper uriCell = row.getCell(1);
-        getFormatter().asLink(uriCell, u, uri);
+        if(displayCompleteUrl) {
+        	uriCell.body(getFormatter().gray(uri+"\n-----\n"+u));
+        }
+        else {
+        	getFormatter().asLink(uriCell, u, uri);
+        }
         CellWrapper cellStatusCode = row.getCell(2);
         if (cellStatusCode == null) {
             throw new IllegalStateException("You must specify a status code cell");
@@ -1015,6 +1026,8 @@ public class RestFixture extends ActionFixture {
         GLOBALS = new Variables(config);
 
         displayActualOnRight = config.getAsBoolean("restfixture.display.actual.on.right", displayActualOnRight);
+
+        displayCompleteUrl = config.getAsBoolean("restfixture.display.complete.url", displayCompleteUrl);
 
         minLenForCollapseToggle = config.getAsInteger("restfixture.display.toggle.for.cells.larger.than", minLenForCollapseToggle);
 
