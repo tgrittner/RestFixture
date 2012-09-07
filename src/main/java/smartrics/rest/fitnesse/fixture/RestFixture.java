@@ -906,6 +906,9 @@ public class RestFixture extends ActionFixture {
         bodyCell.body(GLOBALS.substitute(bodyCell.body()));
         BodyTypeAdapter bodyTypeAdapter = createBodyTypeAdapter();
         process(bodyCell, getLastResponse().getBody(), bodyTypeAdapter);
+        if(row.getCell(5) != null){
+        	row.getCell(5).body(getFormatter().gray(getLastResponse().getDuration().toString() + " msec"));
+        }
     }
 
     // Split out of completeHttpMethodExecution so RestScriptFixture can call this
