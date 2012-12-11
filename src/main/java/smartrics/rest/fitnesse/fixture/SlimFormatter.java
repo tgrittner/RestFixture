@@ -31,17 +31,13 @@ import smartrics.rest.fitnesse.fixture.support.Tools;
 /**
  * Formatter of cells handled by Slim.
  * 
- * @author fabrizio
+ * @author smartrics
  * 
  */
 public class SlimFormatter implements CellFormatter<String> {
 
     private int minLenForToggle = -1;
     private boolean displayActual;
-
-    public SlimFormatter() {
-
-    }
 
     @Override
     public void setDisplayActual(boolean d) {

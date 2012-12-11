@@ -23,15 +23,28 @@ package smartrics.rest.fitnesse.fixture.support;
 /**
  * Wrapper to a table row.
  * 
- * @author fabrizio
+ * @author smartrics
  * 
  * @param <E>
  */
 public interface RowWrapper<E> {
 
+	/**
+	 * @param c
+	 * @return the {@link CellWrapper} at a given position
+	 */
 	CellWrapper<E> getCell(int c);
 
-    int size();
+	/**
+	 * @return the row size.
+	 */
+	int size();
 
-    CellWrapper<E> removeCell(int c);
+	/**
+	 * removes a cell at a given position.
+	 * 
+	 * @param c
+	 * @return the removed cell.
+	 */
+	CellWrapper<E> removeCell(int c);
 }

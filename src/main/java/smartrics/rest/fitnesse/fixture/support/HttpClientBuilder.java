@@ -25,20 +25,29 @@ import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.params.HostParams;
 import org.apache.commons.httpclient.params.HttpClientParams;
 
-import smartrics.rest.config.Config;
 
 /**
  * Helper builder class for an apache {@link HttpClient} that uses data in the
  * {@link Config} to configure the object.
  * 
- * @author fabrizio
+ * @author smartrics
  * 
  */
 public class HttpClientBuilder {
+	/**
+	 * default value of the socket timeout: 3000ms.
+	 */
     public static final Integer DEFAULT_SO_TO = 3000;
+    /**
+     * default value of the proxy port: 80.
+     */
     public static final Integer DEFAULT_PROXY_PORT = 80;
     public static final String DEFAULT_HTTP_MGR = MultiThreadedHttpConnectionManager.class.getName();
 
+    /**
+     * @param config the {@link Config} containing the client configuration paramteres.
+     * @return an instance of an {@link HttpClient}.
+     */
     public HttpClient createHttpClient(final Config config) {
         HttpClient client = createConfiguredClient(config);
         if (config != null) {

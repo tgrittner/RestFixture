@@ -23,24 +23,16 @@ package smartrics.rest.fitnesse.fixture.support;
 import smartrics.rest.client.RestResponse;
 
 /**
- * Strategy to handle LET expressions.
+ * Handles let expressions to assign constant values to symbols.
  * 
  * @author smartrics
  * 
  */
-public interface LetHandler {
+public class LetBodyConstHandler implements LetHandler {
 
-	/**
-	 * 
-	 * @param response
-	 *            the http response
-	 * @param expressionContext
-	 *            the json expression context
-	 * @param expression
-	 *            the expression
-	 * @return applies the expression to response within the given context.
-	 */
-	String handle(RestResponse response, Object expressionContext,
-			String expression);
+    @Override
+    public String handle(RestResponse response, Object expressionContext, String expression) {
+        return expression;
+    }
 
 }

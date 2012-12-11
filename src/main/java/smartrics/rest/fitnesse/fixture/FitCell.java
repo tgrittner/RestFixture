@@ -26,13 +26,17 @@ import fit.Parse;
 /**
  * Wrapper class to a table cell for the Fit runner.
  * 
- * @author fabrizio
+ * @author smartrics
  * 
  */
 public class FitCell implements CellWrapper<Parse> {
 
     private final Parse cell;
 
+	/**
+	 * a fit cell
+	 * @param c the parse object representing the cell.
+	 */
     public FitCell(Parse c) {
         this.cell = c;
     }

@@ -26,91 +26,118 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import smartrics.rest.config.Config;
 import fit.Fixture;
 
 /**
  * Facade to FitNesse global symbols map.
  * 
- * @author fabrizio
+ * @author smartrics
  */
 public class Variables {
-    public static final Pattern VARIABLES_PATTERN = Pattern.compile("\\%([a-zA-Z0-9_]+)\\%");
-    private static final String FIT_NULL_VALUE = fitSymbolForNull();
-    private String nullValue = "null";
+	/**
+	 * pattern matching a variable name: {@code \%([a-zA-Z0-9_]+)\%}
+	 */
+	public static final Pattern VARIABLES_PATTERN = Pattern
+			.compile("\\%([a-zA-Z0-9_]+)\\%");
+	private static final String FIT_NULL_VALUE = fitSymbolForNull();
+	private String nullValue = "null";
 
-    public Variables() {
-        this(Config.getConfig());
-    }
+	/**
+	 * initialises variables with default config. See @link
+	 * {@link #Variables(Config)}
+	 */
+	public Variables() {
+		this(Config.getConfig());
+	}
 
-    public Variables(Config c) {
-        if (c != null) {
-            this.nullValue = c.get("restfixture.null.value.representation", "null");
-        }
-    }
+	/**
+	 * initialises the variables. reade
+	 * {@code restfixture.null.value.representation} to know how to render
+	 * {@code null}s.
+	 * 
+	 * @param c
+	 */
+	public Variables(Config c) {
+		if (c != null) {
+			this.nullValue = c.get("restfixture.null.value.representation",
+					"null");
+		}
+	}
 
-    public void put(String label, String val) {
-        String l = fromFitNesseSymbol(label);
-        Fixture.setSymbol(l, val);
-    }
+	/**
+	 * puts a value.
+	 * 
+	 * @param label
+	 * @param val
+	 */
+	public void put(String label, String val) {
+		Fixture.setSymbol(label, val);
+	}
 
-    public String get(String label) {
-        String l = fromFitNesseSymbol(label);
-        if (Fixture.hasSymbol(l)) {
-            return Fixture.getSymbol(l).toString();
-        }
-        return null;
-    }
+	/**
+	 * gets a value.
+	 * 
+	 * @param label
+	 * @return the value.
+	 */
+	public String get(String label) {
+		if (Fixture.hasSymbol(label)) {
+			return Fixture.getSymbol(label).toString();
+		}
+		return null;
+	}
 
-    public void clearAll() {
-        Fixture.ClearSymbols();
-    }
+	/**
+	 * crears all variables
+	 */
+	public void clearAll() {
+		Fixture.ClearSymbols();
+	}
 
-    public String substitute(String text) {
-        if (text == null) {
-            return null;
-        }
-        Matcher m = VARIABLES_PATTERN.matcher(text);
-        Map<String, String> replacements = new HashMap<String, String>();
-        while (m.find()) {
-            int gc = m.groupCount();
-            if (gc == 1) {
-                String g0 = m.group(0);
-                String g1 = m.group(1);
-                String value = get(g1);
-                if (FIT_NULL_VALUE.equals(value)) {
-                    value = nullValue;
-                }
-                replacements.put(g0, value);
-            }
-        }
-        String newText = text;
-        for (Entry<String, String> en : replacements.entrySet()) {
-            String k = en.getKey();
-            String replacement = replacements.get(k);
-            if (replacement != null) {
-                newText = newText.replaceAll(k, replacement);
-            }
-        }
-        return newText;
-    }
+	/**
+	 * replaces a text with variable values.
+	 * @param text
+	 * @return the substituted text.
+	 */
+	public String substitute(String text) {
+		if (text == null) {
+			return null;
+		}
+		Matcher m = VARIABLES_PATTERN.matcher(text);
+		Map<String, String> replacements = new HashMap<String, String>();
+		while (m.find()) {
+			int gc = m.groupCount();
+			if (gc == 1) {
+				String g0 = m.group(0);
+				String g1 = m.group(1);
+				String value = get(g1);
+				if (FIT_NULL_VALUE.equals(value)) {
+					value = nullValue;
+				}
+				replacements.put(g0, value);
+			}
+		}
+		String newText = text;
+		for (Entry<String, String> en : replacements.entrySet()) {
+			String k = en.getKey();
+			String replacement = replacements.get(k);
+			if (replacement != null) {
+				newText = newText.replaceAll(k, replacement);
+			}
+		}
+		return newText;
+	}
 
-    private String fromFitNesseSymbol(String label) {
-        String l = label;
-        if (l.startsWith("$")) {
-            // kept for backward compatibility
-            System.err.println("The use of $ to reference labels for storage will be deprecated in the next major version of RestFixture (" + label + ")");
-            l = l.substring(1);
-        }
-        return l;
-    }
+	private static String fitSymbolForNull() {
+		final String k = "somerandomvaluetogettherepresentationofnull-1234567890";
+		Fixture.setSymbol(k, null);
+		return Fixture.getSymbol(k).toString();
+	}
 
-    private static String fitSymbolForNull() {
-        final String k = "somerandomvaluetogettherepresentationofnull-1234567890";
-        Fixture.setSymbol(k, null);
-        return Fixture.getSymbol(k).toString();
-    }
-
+	/**
+	 * @param s
+	 * @return the null representation if the input is null.
+	 */
 	public String replaceNull(String s) {
 		if (s == null) {
 			return nullValue;
