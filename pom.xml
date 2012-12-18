@@ -12,7 +12,7 @@
 	 -->
 
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>smartrics.restfixture</groupId>
+	<groupId>pgrund.restfixture</groupId>
 	<artifactId>RestFixture</artifactId>
 	<version>3.0-SNAPSHOT</version>
 	<name>RestFixture</name>
