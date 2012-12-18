@@ -22,7 +22,7 @@ package smartrics.rest.fitnesse.fixture;
 
 import java.util.List;
 
-import smartrics.rest.config.Config;
+import smartrics.rest.fitnesse.fixture.support.Config;
 import smartrics.rest.fitnesse.fixture.support.Tools;
 import fit.Fixture;
 import fit.Parse;
@@ -33,7 +33,7 @@ import fit.Parse;
  * A configuration is a named map that stores key/value pairs. The name of the
  * map is passed as an optional parameter to the fixture. If not passed it's
  * assumed that a default name is used. The default value of the map name is
- * {@link Config.DEFAULT_CONFIG_NAME}.
+ * {@link Config#DEFAULT_CONFIG_NAME}.
  * 
  * The structure of the table of this fixture simply a table that reports
  * key/values. The name of the config is optionally passed to the fixture.
@@ -113,7 +113,6 @@ public class RestFixtureConfig extends Fixture {
 	 * 
 	 * For fixtures with no args.
 	 * 
-	 * @param args
 	 */
 	public RestFixtureConfig() {
 
@@ -133,7 +132,7 @@ public class RestFixtureConfig extends Fixture {
 	 * Support for Slim runner.
 	 * 
 	 * @param rows
-	 * @return
+	 * @return the content as a list (of rows) of lists of strings (the cells).
 	 */
 	public List<List<String>> doTable(List<List<String>> rows) {
 		Config c = getConfig();
@@ -149,16 +148,17 @@ public class RestFixtureConfig extends Fixture {
 				row.set(0,
 						"error:"
 								+ k
-								+ Tools.toHtml("\n\nthis line doesn't conform to NVP format (col 0 for name, col 1 for value) - content skipped"));
+								+ Tools.toHtml("\n\nthis line doesn't conform to NVP format "
+										+ "(col 0 for name, col 1 for value) - content skipped"));
 			}
 		}
 		return rows;
 	}
 
 	/**
-	 * Processes each row in the config fixture table and loads the key/value pairs. 
-	 * The fixture optional first argument is the config name. If not
-	 * supplied the value is defaulted. See {@link Config.DEFAULT_CONFIG_NAME}.
+	 * Processes each row in the config fixture table and loads the key/value
+	 * pairs. The fixture optional first argument is the config name. If not
+	 * supplied the value is defaulted. See {@link Config#DEFAULT_CONFIG_NAME}.
 	 */
 	@Override
 	public void doRow(Parse p) {

@@ -18,29 +18,35 @@
  *  If you want to contact the author please leave a comment here
  *  http://smartrics.blogspot.com/2008/08/get-fitnesse-with-some-rest.html
  */
-package smartrics.rest.fitnesse.fixture.support;
+package smartrics.rest.fitnesse.fixture.support.http;
 
-import smartrics.rest.client.RestResponse;
+import org.apache.commons.httpclient.URI;
+import org.apache.commons.httpclient.URIException;
+
+import smartrics.rest.client.RestClient;
 
 /**
- * Strategy to handle LET expressions.
+ * Get method, enhanced with support of query parameters.
  * 
  * @author smartrics
  * 
  */
-public interface LetHandler {
+public class TraceMethod extends org.apache.commons.httpclient.methods.TraceMethod {
 
 	/**
-	 * 
-	 * @param response
-	 *            the http response
-	 * @param expressionContext
-	 *            the json expression context
-	 * @param expression
-	 *            the expression
-	 * @return applies the expression to response within the given context.
+	 * A no args constructor to allow creation. The Uri will be set later for the {@link RestClient} implementation.
 	 */
-	String handle(RestResponse response, Object expressionContext,
-			String expression);
+	public TraceMethod() {
+		super("http://dummy.com");
+	}
+	
+	@SuppressWarnings("deprecation")
+	public URI getURI() throws URIException {
+		return URIBuilder.newURI(this, super.getHostConfiguration());
+	}
+
+	public void setURI(URI uri) throws URIException {
+		new URIBuilder().setURI(this, uri);
+	}
 
 }

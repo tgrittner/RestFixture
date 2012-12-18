@@ -28,7 +28,7 @@ import java.util.Map;
  * Depending on Content-Type passed in, it'll build the appropriate type adapter
  * for parsing/rendering the cell content.
  * 
- * @author fabrizio
+ * @author smartrics
  * 
  */
 public class BodyTypeAdapterFactory {
@@ -45,10 +45,13 @@ public class BodyTypeAdapterFactory {
     private BodyTypeAdapterFactory() {
     }
 
-    // public static BodyTypeAdapter getBodyTypeAdapter(ContentType content) {
-    // return getBodyTypeAdapter(content, Charset.defaultCharset().name());
-    // }
-
+    /**
+     * Returns a @link {@link BodyTypeAdapter} for the given charset and @link {@link ContentType}.
+     * 
+     * @param content the contentType
+     * @param charset the charset.
+     * @return an instance of {@link BodyTypeAdapter}
+     */
     public static BodyTypeAdapter getBodyTypeAdapter(ContentType content, String charset) {
         @SuppressWarnings("rawtypes")
         Class aClass = contentTypeToBodyTypeAdapter.get(content);

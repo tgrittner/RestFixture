@@ -31,13 +31,10 @@ import smartrics.rest.client.RestResponse;
 /**
  * Handles header (a list of Header objects) LET manipulations.
  * 
- * @author fabrizio
+ * @author smartrics
  * 
  */
 public class LetHeaderHandler implements LetHandler {
-
-    public LetHeaderHandler() {
-    }
 
     public String handle(RestResponse response, Object expressionContext, String expression) {
         List<String> content = new ArrayList<String>();

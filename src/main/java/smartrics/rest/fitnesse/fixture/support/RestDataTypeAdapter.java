@@ -30,7 +30,7 @@ import fit.TypeAdapter;
 /**
  * Base class for all Type Adapters used by RestFixture.
  * 
- * @author fabrizio
+ * @author smartrics
  * 
  */
 public abstract class RestDataTypeAdapter extends TypeAdapter implements fitnesse.slim.Converter {
@@ -59,6 +59,9 @@ public abstract class RestDataTypeAdapter extends TypeAdapter implements fitness
         errors.add(e);
     }
 
+    /**
+     * @return an unmodifiable list of errors.
+     */
     public List<String> getErrors() {
         return Collections.unmodifiableList(errors);
     }
@@ -66,7 +69,7 @@ public abstract class RestDataTypeAdapter extends TypeAdapter implements fitness
     /**
      * Used to pass some form of context to the adapter.
      * 
-     * @param context
+     * @param c
      */
     public void setContext(Map<String, String> c) {
         this.context = c;
